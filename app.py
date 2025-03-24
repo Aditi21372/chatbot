@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
@@ -35,6 +35,24 @@ def initialize_chatbot():
 
 # Initialize chatbot at startup
 initialize_chatbot()
+
+@app.websocket("/ws/chat")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        try:
+            data = await websocket.receive_text()
+        except WebSocketDisconnect:
+            print("WebSocket connection closed")
+            break
+        if qa_chain is None:
+            await websocket.send_text("Chatbot is not initialized.")
+            continue
+        try:
+            result = qa_chain.invoke({"query": data})
+            await websocket.send_text(result["result"])
+        except Exception as e:
+            await websocket.send_text(f"Error: {str(e)}")
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):

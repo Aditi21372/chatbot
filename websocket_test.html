@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 400px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: thin;
+        }
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        .user-message {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+        }
+        .bot-message {
+            align-self: flex-start;
+            background: #e9ecef;
+            color: #333;
+        }
+        .typing-indicator {
+            font-style: italic;
+            color: #777;
+            font-size: 12px;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            background: white;
+        }
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            font-size: 16px;
+            background: #f1f1f1;
+        }
+        #sendButton {
+            margin-left: 10px;
+            padding: 10px 15px;
+            border: none;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #sendButton:hover {
+            background: linear-gradient(90deg, #0056b3, #007bff);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">Chat Bot</div>
+        <div id="chatBox" class="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat');
+
+        socket.onopen = function() {
+            console.log('WebSocket connected');
+        };
+
+        socket.onmessage = function(event) {
+            const chatBox = document.getElementById('chatBox');
+
+            // Remove the typing indicator if it exists
+            const typingIndicator = document.querySelector('.typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+
+            // Create bot message
+            const message = document.createElement('div');
+            message.className = 'message bot-message';
+            message.innerHTML = event.data;
+            chatBox.appendChild(message);
+            
+            // Auto-scroll to latest message
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        document.getElementById('sendButton').onclick = function() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+
+            const chatBox = document.getElementById('chatBox');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.innerHTML = messageText;
+            chatBox.appendChild(userMessage);
+            socket.send(messageText);
+            messageInput.value = ''; // Clear input field
+
+            // Typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = 'Bot is typing...';
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        socket.onclose = function() {
+            console.log('WebSocket disconnected');
+        };
+    </script>
+
+</body>
+</html>
