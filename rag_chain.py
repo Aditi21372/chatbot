@@ -101,7 +101,7 @@ if __name__ == "__main__":
     qa_chain = rag_chain.create_chain()
     print("✅ RAG chatbot chain created!")
 
-    query = "How can I improve productivity?"
+    query = "strategies for social interaction"
     print(f"🔍 Debug: Query - {query}")
 
     print("🔍 Running chatbot on query...")
