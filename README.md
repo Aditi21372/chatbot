@@ -1,5 +1,7 @@
 # NeuroChat: RAG-Powered Chatbot API
 
+![CI](https://github.com/Aditi21372/chatbot/actions/workflows/ci.yml/badge.svg) ![License](https://img.shields.io/badge/License-MIT-green)
+
 > A production-style **Retrieval-Augmented Generation (RAG)** service that answers questions strictly from your own documents, built with FastAPI, LangChain, and FAISS.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
