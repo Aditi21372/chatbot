@@ -1,6 +1,6 @@
-# NeuroChat — RAG-Powered Chatbot API
+# NeuroChat: RAG-Powered Chatbot API
 
-> A production-style **Retrieval-Augmented Generation (RAG)** service that answers questions strictly from your own documents — built with FastAPI, LangChain, and FAISS.
+> A production-style **Retrieval-Augmented Generation (RAG)** service that answers questions strictly from your own documents, built with FastAPI, LangChain, and FAISS.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
@@ -13,7 +13,7 @@
 1. **Ingests** any text document and splits it into overlapping chunks
 2. **Embeds** the chunks with `sentence-transformers/all-MiniLM-L6-v2` into a FAISS vector index
 3. **Retrieves** the most relevant chunks for a user query
-4. **Generates** a grounded answer via an LLM — OpenAI GPT if a key is configured, or a fully **free local fallback** (TinyLlama-1.1B) so the service runs with zero API cost
+4. **Generates** a grounded answer via an LLM: OpenAI GPT if a key is configured, or a fully **free local fallback** (TinyLlama-1.1B) so the service runs with zero API cost
 
 Designed as an accessible, low-sensory assistant: answers are constrained to the provided context, keeping responses brief and factual.
 
@@ -65,7 +65,7 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
-Optional — to use GPT instead of the free model:
+Optional: to use GPT instead of the free model:
 
 ```bash
 cp .env.example .env   # add your OPENAI_API_KEY
@@ -94,8 +94,8 @@ curl -X POST http://localhost:8000/chat \
 ## Key engineering details
 
 - **Custom LangChain `LLM` wrapper** (`FreeLLM`) integrates a Hugging Face `transformers` pipeline into LangChain's `RetrievalQA`, with Pydantic v2 compatibility
-- **Graceful LLM fallback** — no API key needed to run the full pipeline
-- **Grounded prompting** — the model is instructed to answer only from retrieved context and admit when it doesn't know
+- **Graceful LLM fallback**: no API key needed to run the full pipeline
+- **Grounded prompting**: the model is instructed to answer only from retrieved context and admit when it doesn't know
 
 ## Roadmap
 
